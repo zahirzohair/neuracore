@@ -84,8 +84,8 @@ src/
  ├── Database/
  |
 views/
- |  ├── Auth/
- |
+    ├── Auth/
+ 
 ```
 
 ---
