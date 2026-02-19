@@ -1,0 +1,18 @@
+{
+    "name": "zahirzohair/neuracore",
+    "description": "Event-driven workflow engine in pure PHP",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zahirzohair\\Neuracore\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "zahir zohair"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
