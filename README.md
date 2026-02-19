@@ -8,15 +8,15 @@ The goal of this project is to demonstrate **senior-level backend engineering co
 
 ## ✨ Features
 
-* 🔐 Authentication system (login flow)
-* 🧠 Domain-driven architecture
-* 🧩 Workflow management
-* 📡 Event-driven design
-* 🗄️ Repository pattern with MySQL
-* ⚙️ Service layer (use-case driven)
-* 🧵 Foundation for async jobs & queue
-* 🧱 Clean separation of concerns
-* 🧪 API endpoints testable via Postman
+* Authentication system (login flow)
+* Domain-driven architecture
+* Workflow management
+* Event-driven design
+* Repository pattern with MySQL
+* Service layer (use-case driven)
+* Foundation for async jobs & queue
+* Clean separation of concerns
+* API endpoints testable via Postman
 
 ---
 
@@ -47,6 +47,14 @@ Infrastructure Layer (MySQL Repositories)
 ## 📂 Project Structure
 
 ```
+bin/
+ |
+config/
+ |
+logs/
+ |
+public/
+ |
 src/
  ├── Application/
  │    ├── Auth/
@@ -66,10 +74,18 @@ src/
  ├── Controllers/
  │
  └── Core/
-      ├── Router
-      ├── Request
-      ├── Response
-      └── App
+ │    ├── Router
+ │    ├── Request
+ │    ├── Response
+ │    └── App
+ |    ├── Contrller
+ │    └── View
+ |
+ ├── Database/
+ |
+views/
+ |  ├── Auth/
+ |
 ```
 
 ---
