@@ -25,15 +25,22 @@ class Router
             echo "404 Not Found";
             return;
         }
-        // Handle array controller [Class, 'method']
-        if (is_array($action)) {
-            [$class, $method] = $action;
+        // If action is [object, method]
+        if (is_array($action) && is_object($action[0])) {
+            [$controller, $method] = $action;
+            call_user_func([$controller, $method], $request);
+            return;
+        }
 
+        // If action is [class, method]
+        if (is_array($action) && is_string($action[0])) {
+            [$class, $method] = $action;
             $controller = new $class();
             call_user_func([$controller, $method], $request);
-        } else {
-            // Closure route
-            call_user_func($action, $request);
+            return;
         }
+
+        // Closure
+        call_user_func($action, $request);
     }
 }
