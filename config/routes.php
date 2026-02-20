@@ -15,8 +15,6 @@ return function (Router $router) {
     });
 
     //$router->get('/login', [AuthController::class, 'showLoginForm']);
-    // $router->post('/login', [AuthController::class, 'login']);
-
     $router->get('/login', function () {
         $pdo = Connection::make();
         $userRepo = new MySQLUserRepository($pdo);
@@ -25,6 +23,7 @@ return function (Router $router) {
         $controller->showLoginForm();
     });
 
+    // $router->post('/login', [AuthController::class, 'login']);
     $router->post('/login', function ($request) {
         $pdo = Connection::make();
         $userRepo = new MySQLUserRepository($pdo);
@@ -32,12 +31,6 @@ return function (Router $router) {
         $controller = new AuthController($authService);
         $controller->login($request);
     });
-
-
-    $pdo = Connection::make();
-    $repo = new MySQLWorkflowRepository($pdo);
-    $service = new WorkflowService($repo);
-    $controller = new WorkflowController($service);
 
     // $router->get('/workflows', [$controller, 'index']);
     $router->get('/workflows', function ($request) {
@@ -58,6 +51,21 @@ return function (Router $router) {
         $controller->create($request);
     });
 
-    $router->post('/workflows/start', [$controller, 'start']);
-    $router->post('/workflows/complete', [$controller, 'complete']);
+    // $router->post('/workflows/start', [$controller, 'start']);
+    $router->post('/workflows/start', function ($request) {
+        $pdo = Connection::make();
+        $repo = new MySQLWorkflowRepository($pdo);
+        $service = new WorkflowService($repo);
+        $controller = new WorkflowController($service);
+        $controller->start($request);
+    });
+
+    // $router->post('/workflows/complete', [$controller, 'complete']);
+    $router->post('/workflows/create', function ($request) {
+        $pdo = Connection::make();
+        $repo = new MySQLWorkflowRepository($pdo);
+        $service = new WorkflowService($repo);
+        $controller = new WorkflowController($service);
+        $controller->complete($request);
+    });
 };
