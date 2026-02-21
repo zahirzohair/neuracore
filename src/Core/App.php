@@ -4,10 +4,13 @@ namespace Zahirzohair\Neuracore\Core;
 
 use Zahirzohair\Neuracore\Application\Auth\AuthService;
 use Zahirzohair\Neuracore\Application\Event\EventService;
+use Zahirzohair\Neuracore\Application\Job\Handlers\SendNotificationHandler;
+use Zahirzohair\Neuracore\Application\Job\JobService;
 use Zahirzohair\Neuracore\Application\Workflow\WorkflowService;
 use Zahirzohair\Neuracore\Core\Router;
 use Zahirzohair\Neuracore\Database\Connection;
 use Zahirzohair\Neuracore\Infrastructure\Persistence\MySQLEventRepository;
+use Zahirzohair\Neuracore\Infrastructure\Persistence\MySQLJobRepository;
 use Zahirzohair\Neuracore\Infrastructure\Persistence\MySQLUserRepository;
 use Zahirzohair\Neuracore\Infrastructure\Persistence\MySQLWorkflowRepository;
 
@@ -21,7 +24,7 @@ class App
         $pdo = Connection::make();
         $dispatcher = new EventDispatcher();
 
-        // 👉 Register listener here (OK for now)
+        // Register listener here (OK for now)
         $dispatcher->listen('workflow.created', function ($payload) {
             error_log('Workflow created ID: ' . $payload->workflow_id);
         });
@@ -30,11 +33,22 @@ class App
         $workflowRepo = new MySQLWorkflowRepository($pdo);
         $eventRepo = new MySQLEventRepository($pdo);
         $userRepo = new MySQLUserRepository($pdo);
+        $jobRepo = new MySQLJobRepository($pdo);
 
         // Services
         $eventService = new EventService($eventRepo, $dispatcher);
         $workflowService = new WorkflowService($workflowRepo, $eventService);
         $authService = new AuthService($userRepo);
+        $handlers = [
+            'send_notification' => new SendNotificationHandler(),
+        ];
+
+        $jobService = new JobService($jobRepo, $handlers);
+
+
+        $dispatcher->listen('workflow.created', function ($event) use ($jobService) {
+            $jobService->dispatch('send_notification', $event->payload());
+        });
 
         // Load routes
         $routes = require __DIR__ . '/../../config/routes.php';
