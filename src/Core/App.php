@@ -24,7 +24,7 @@ class App
         $pdo = Connection::make();
         $dispatcher = new EventDispatcher();
 
-        // Register listener here (OK for now)
+        // Register listener here
         $dispatcher->listen('workflow.created', function ($payload) {
             error_log('Workflow created ID: ' . $payload->workflow_id);
         });
@@ -39,6 +39,7 @@ class App
         $eventService = new EventService($eventRepo, $dispatcher);
         $workflowService = new WorkflowService($workflowRepo, $eventService);
         $authService = new AuthService($userRepo);
+
         $handlers = [
             'send_notification' => new SendNotificationHandler(),
         ];

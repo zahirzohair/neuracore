@@ -8,16 +8,16 @@ use Zahirzohair\Neuracore\Core\Response;
 
 class WorkflowController
 {
-    private WorkflowService $service;
+    private WorkflowService $workflowService;
 
-    public function __construct(WorkflowService $service)
+    public function __construct(WorkflowService $workflowService)
     {
-        $this->service = $service;
+        $this->workflowService = $workflowService;
     }
 
     public function index()
     {
-        $workflows = $this->service->all();
+        $workflows = $this->workflowService->all();
 
         foreach ($workflows as $wf) {
             echo "ID: {$wf->id()} | {$wf->name()} | {$wf->status()} <br>";
@@ -26,7 +26,7 @@ class WorkflowController
 
     public function create(Request $request)
     {
-        $workflow = $this->service->create(
+        $workflow = $this->workflowService->create(
             $request->input('name'),
             1, // user id (temporary)
             ['step1', 'step2']
@@ -37,7 +37,7 @@ class WorkflowController
 
     public function start(Request $request)
     {
-        $workflow = $this->service->start((int)$request->input('id'));
+        $workflow = $this->workflowService->start((int)$request->input('id'));
 
         if (!$workflow) {
             return Response::html('Workflow not found', 404);
@@ -48,7 +48,7 @@ class WorkflowController
 
     public function complete(Request $request)
     {
-        $workflow = $this->service->complete((int)$request->input('id'));
+        $workflow = $this->workflowService->complete((int)$request->input('id'));
 
         if (!$workflow) {
             return Response::html('Workflow not found', 404);
