@@ -1,0 +1,7 @@
+CREATE TABLE jobs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type VARCHAR(100),
+    payload JSON,
+    status VARCHAR(20) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

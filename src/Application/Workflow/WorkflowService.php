@@ -8,12 +8,12 @@ use Zahirzohair\Neuracore\Domain\Workflow\WorkflowRepository;
 
 class WorkflowService
 {
-    private WorkflowRepository $workflows;
+    private WorkflowRepository $workflowsRepository;
     private EventService $eventService;
 
-    public function __construct(WorkflowRepository $workflows, EventService $eventService)
+    public function __construct(WorkflowRepository $workflowsRepository, EventService $eventService)
     {
-        $this->workflows = $workflows;
+        $this->workflowsRepository = $workflowsRepository;
         $this->eventService = $eventService;
     }
 
@@ -26,7 +26,7 @@ class WorkflowService
             $steps
         );
 
-        $savedWorkflow = $this->workflows->save($workflow);
+        $savedWorkflow = $this->workflowsRepository->save($workflow);
         // 🔥 Fire event
         $this->eventService->fire('workflow.created', [
             'workflow_id' => $savedWorkflow->id(),
@@ -39,7 +39,7 @@ class WorkflowService
 
     public function start(int $workflowId): ?Workflow
     {
-        $workflow = $this->workflows->findById($workflowId);
+        $workflow = $this->workflowsRepository->findById($workflowId);
 
         if (!$workflow) {
             return null;
@@ -47,12 +47,12 @@ class WorkflowService
 
         $workflow->markRunning();
 
-        return $this->workflows->save($workflow);
+        return $this->workflowsRepository->save($workflow);
     }
 
     public function complete(int $workflowId): ?Workflow
     {
-        $workflow = $this->workflows->findById($workflowId);
+        $workflow = $this->workflowsRepository->findById($workflowId);
 
         if (!$workflow) {
             return null;
@@ -60,16 +60,16 @@ class WorkflowService
 
         $workflow->markCompleted();
 
-        return $this->workflows->save($workflow);
+        return $this->workflowsRepository->save($workflow);
     }
 
     public function forUser(int $userId): array
     {
-        return $this->workflows->findByUser($userId);
+        return $this->workflowsRepository->findByUser($userId);
     }
 
     public function all(): array
     {
-        return $this->workflows->all();
+        return $this->workflowsRepository->all();
     }
 }
