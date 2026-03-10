@@ -50,11 +50,37 @@ class WorkflowService
         return $this->workflowsRepository->save($workflow);
     }
 
+    public function startForUser(int $workflowId, int $userId): ?Workflow
+    {
+        $workflow = $this->workflowsRepository->findById($workflowId);
+
+        if (!$workflow || $workflow->userId() !== $userId) {
+            return null;
+        }
+
+        $workflow->markRunning();
+
+        return $this->workflowsRepository->save($workflow);
+    }
+
     public function complete(int $workflowId): ?Workflow
     {
         $workflow = $this->workflowsRepository->findById($workflowId);
 
         if (!$workflow) {
+            return null;
+        }
+
+        $workflow->markCompleted();
+
+        return $this->workflowsRepository->save($workflow);
+    }
+
+    public function completeForUser(int $workflowId, int $userId): ?Workflow
+    {
+        $workflow = $this->workflowsRepository->findById($workflowId);
+
+        if (!$workflow || $workflow->userId() !== $userId) {
             return null;
         }
 

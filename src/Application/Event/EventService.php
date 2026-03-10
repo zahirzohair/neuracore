@@ -32,4 +32,14 @@ class EventService
     {
         return $this->events->all();
     }
+
+    public function recentForUser(int $userId, int $limit = 100): array
+    {
+        $events = $this->events->recent($limit);
+
+        return array_values(array_filter($events, function (Event $event) use ($userId) {
+            $payload = $event->payload();
+            return isset($payload['user_id']) && (int)$payload['user_id'] === $userId;
+        }));
+    }
 }

@@ -50,4 +50,18 @@ class MySQLEventRepository implements EventRepository
             new \DateTimeImmutable($row['occurred_at'])
         ), $rows);
     }
+
+    public function recent(int $limit = 100): array
+    {
+        $limit = max(1, min(500, (int)$limit));
+        $stmt = $this->pdo->query("SELECT * FROM events ORDER BY id DESC LIMIT {$limit}");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(fn($row) => new Event(
+            (int)$row['id'],
+            $row['name'],
+            json_decode($row['payload'], true) ?? [],
+            new \DateTimeImmutable($row['occurred_at'])
+        ), $rows);
+    }
 }

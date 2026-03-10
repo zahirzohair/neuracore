@@ -24,9 +24,10 @@ class App
         $pdo = Connection::make();
         $dispatcher = new EventDispatcher();
 
-        // Register listener here
-        $dispatcher->listen('workflow.created', function ($payload) {
-            error_log('Workflow created ID: ' . $payload->workflow_id);
+        $dispatcher->listen('workflow.created', function ($event) {
+            $payload = $event->payload();
+            $workflowId = $payload['workflow_id'] ?? null;
+            error_log('Workflow created ID: ' . ($workflowId ?? 'unknown'));
         });
 
         // Repositories
@@ -53,7 +54,7 @@ class App
 
         // Load routes
         $routes = require __DIR__ . '/../../config/routes.php';
-        $routes($router, $workflowService, $authService);
+        $routes($router, $workflowService, $authService, $jobService, $eventService);
 
         // Create a Request object
         $request = new Request();

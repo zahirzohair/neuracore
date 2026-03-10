@@ -163,6 +163,9 @@ CREATE TABLE workflows (
 
 ```
 POST /login
+GET  /register
+POST /register
+GET  /logout
 ```
 
 ### Workflows
@@ -172,6 +175,13 @@ GET  /workflows            → list workflows
 POST /workflows/create     → create workflow
 POST /workflows/start      → start workflow
 POST /workflows/complete   → complete workflow
+```
+
+### Queue / Observability
+
+```
+GET /jobs                  → list your recent jobs
+GET /events                → list your recent events
 ```
 
 ---

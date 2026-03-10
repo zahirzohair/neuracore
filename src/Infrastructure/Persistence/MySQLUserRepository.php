@@ -28,8 +28,26 @@ class MySQLUserRepository implements UserRepository
 
         return new User(
             (int) $row['id'],
+            $row['name'] ?? '',
             $row['email'],
             $row['password']
         );
+    }
+
+    public function create(User $user): User
+    {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO users (name, email, password) VALUES (:name, :email, :password)"
+        );
+
+        $stmt->execute([
+            'name' => $user->name(),
+            'email' => $user->email(),
+            'password' => $user->passwordHash(),
+        ]);
+
+        $id = (int) $this->pdo->lastInsertId();
+
+        return new User($id, $user->name(), $user->email(), $user->passwordHash());
     }
 }

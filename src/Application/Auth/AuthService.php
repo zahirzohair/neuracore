@@ -3,6 +3,7 @@
 namespace Zahirzohair\Neuracore\Application\Auth;
 
 use Zahirzohair\Neuracore\Domain\User\UserRepository;
+use Zahirzohair\Neuracore\Domain\User\User;
 
 class AuthService
 {
@@ -26,5 +27,18 @@ class AuthService
         }
 
         return $user;
+    }
+
+    public function register(string $name, string $email, string $password): ?User
+    {
+        $existing = $this->users->findByEmail($email);
+        if ($existing) {
+            return null;
+        }
+
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $user = new User(null, $name, $email, $hash);
+
+        return $this->users->create($user);
     }
 }

@@ -24,11 +24,8 @@ class JobService
 
     public function processNext(): void
     {
-        $job = $this->jobs->nextPending();
+        $job = $this->jobs->claimNextPending();
         if (!$job) return;
-
-        $job->markProcessing();
-        $this->jobs->updateStatus($job->id(), $job->status());
 
         try {
             $handler = $this->handlers[$job->type()] ?? null;
@@ -39,11 +36,20 @@ class JobService
 
             $handler->handle($job);
 
-            $job->markCompleted();
-            $this->jobs->updateStatus($job->id(), $job->status());
+            $this->jobs->markCompleted($job->id());
         } catch (\Throwable $e) {
-            $job->markFailed();
-            $this->jobs->updateStatus($job->id(), $job->status());
+            $nextStatus = ($job->attempts() < $job->maxAttempts()) ? 'pending' : 'failed';
+            $this->jobs->markFailed($job->id(), $nextStatus, $e->getMessage());
         }
+    }
+
+    public function recentForUser(int $userId, int $limit = 50): array
+    {
+        $jobs = $this->jobs->recent($limit);
+
+        return array_values(array_filter($jobs, function (Job $job) use ($userId) {
+            $payload = $job->payload();
+            return isset($payload['user_id']) && (int)$payload['user_id'] === $userId;
+        }));
     }
 }
